@@ -17,46 +17,58 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.Tag;
 import com.flowpowered.nbt.stream.NBTInputStream;
 
+import javafx.scene.paint.Color;
 import lightbulb.LightbulbTerminal;
 
 public class SchematicConverter implements Runnable {
     LightbulbTerminal io;
-    File schematic;
-    HashMap<String, List<String>> mapping;
+    List<File> schematics;
 
     @Override
     public void run() {
 	io = Main.terminal;
+	io.setPrintLines(true, Color.CORNFLOWERBLUE);
+	io.setDefaultStrPrefix("Schematics Converter >");
 
 	getFile();
-	io.println("What do you want to name the blueprint?");
-	String name = io.readLine("Name:");
-	int[][][] map = parseSchematic();
-	String result = convertToJson(map, name);
-	saveFile(result);
-	io.println("Finished!");
+
+	for (File schematic : schematics) {
+	    io.println("\nCurrent schematic: " + schematic.getName());
+	    io.println("What do you want to name the blueprint?");
+	    String name = io.readLine("Name:");
+	    int[][][] map = parseSchematic(schematic);
+	    String result = convertToJson(map, name);
+	    saveFile(result);
+	}
     }
 
     private void getFile() {
-	io.println("Select a schematics file to be converted:");
-
-	mapping = new HashMap<String, List<String>>();
+	HashMap<String, List<String>> mapping = new HashMap<String, List<String>>();
 	ArrayList<String> extension = new ArrayList<String>();
 	extension.add("*.schematic");
 	mapping.put("Minecraft schematic", extension);
 
-	List<File> files = io.getFile(false, "Select a schematic file", mapping);
+	io.println("Select one or more schematics files to be converted:");
+	List<File> files = io.getFile(true, "Schematics file:", mapping);
 
-	if (files != null && files.size() > 0) {
-	    schematic = files.get(0);
+	if (files != null && files.get(0) != null) {
+	    schematics = files;
 	} else {
 	    io.println("Cannot continue without a file!");
 	    System.exit(0);
 	}
     }
-    
+
     private void saveFile(String result) {
-	File path = io.saveFile("Save the converted file", mapping);
+	HashMap<String, List<String>> mapping = new HashMap<String, List<String>>();
+	ArrayList<String> extension = new ArrayList<String>();
+	extension.add("*.json");
+	mapping.put("CS Blueprint", extension);
+
+	io.println("Select where to save the blueprint:");
+	File path = io.saveFile("Blueprint: ", mapping);
+
+	io.println("Saving the file...");
 	FileWriter fw;
 	try {
 	    fw = new FileWriter(path);
@@ -64,11 +76,13 @@ public class SchematicConverter implements Runnable {
 	    fw.flush();
 	    fw.close();
 	} catch (IOException e) {
-	   io.println(e.getLocalizedMessage());
+	    io.println("Could not save file!");
+	    io.println(e.getLocalizedMessage());
 	}
+	io.println("Saved!");
     }
 
-    private int[][][] parseSchematic() {
+    private int[][][] parseSchematic(File schematic) {
 	Tag<?> readTag = null;
 
 	try {
@@ -92,7 +106,7 @@ public class SchematicConverter implements Runnable {
 
 	byte[] blocks = (byte[]) content.get("Blocks").getValue();
 	ArrayList<Integer> blockTypes = new ArrayList<Integer>();
-	
+
 	int index = 0;
 	for (int y = 0; y < height; y++) {
 	    for (int z = 0; z < length; z++) {
@@ -104,21 +118,14 @@ public class SchematicConverter implements Runnable {
 		}
 	    }
 	}
-	
+
 	Collections.sort(blockTypes);
-	
+
 	io.println("Block IDs:");
-	for (int id: blockTypes) {
+	for (int id : blockTypes) {
 	    io.println(id);
 	}
 
-	// for (int i = 0; i < map.length; i++) {
-	// for (int j = 0; j < map[i].length; j++) {
-	// for (int k = 0; k < map[j].length; k++) {
-	// io.println(i + "x" + j + "x" + k + ": " + map[i][j][k]);
-	// }
-	// }
-	// }
 	return map;
     }
 
