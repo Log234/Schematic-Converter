@@ -34,10 +34,14 @@ public class SchematicConverter implements Runnable {
 
 	for (File schematic : schematics) {
 	    io.println("\nCurrent schematic: " + schematic.getName());
+	    
 	    io.println("What do you want to name the blueprint?");
 	    String name = io.readLine("Name:");
+	    
 	    int[][][] map = parseSchematic(schematic);
-	    String result = convertToJson(map, name);
+	    ArrayList<Chunk> chunks = generateChunks(map);
+	    convertIDs(chunks);
+	    String result = convertToJson(chunks, name);
 	    saveFile(result);
 	}
     }
@@ -128,94 +132,95 @@ public class SchematicConverter implements Runnable {
 
 	return map;
     }
+    
+    private ArrayList<Chunk> generateChunks(int[][][] map) {
+	ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+	
+	for (int y = 0; y < map[0].length; y++) {
+	    for (int z = 0; z < map[0][0].length; z++) {
+		for (int x = 0; x < map.length; x++) {
+		    Chunk chunk = new Chunk(map[x][y][z], x, y, z);
+		    chunks.add(chunk);
+		}
+	    }
+	}
+	
+	return chunks;
+    }
+    
+    private void convertIDs(ArrayList<Chunk> chunks) {
+	for (Chunk chunk: chunks) {
+	    switch (chunk.intBlockId) {
+	    case 0:
+		break;
+
+	    case 2:
+		chunk.strBlockId = "grass";
+		break;
+
+	    case 3:
+		chunk.strBlockId = "dirt";
+		break;
+
+	    case 4:
+		chunk.strBlockId = "stonebricks";
+		break;
+
+	    case 5:
+		chunk.strBlockId = "planks";
+		break;
+
+	    case 17:
+		chunk.strBlockId = "logtemperate";
+		break;
+
+	    case 53:
+		chunk.strBlockId = "planks";
+		break;
+
+	    case 54:
+		chunk.strBlockId = "crate";
+		break;
+
+	    case 58:
+		chunk.strBlockId = "workbench";
+		break;
+
+	    case 61:
+		chunk.strBlockId = "stonebricks";
+		break;
+
+	    case 67:
+		chunk.strBlockId = "stonebricks";
+		break;
+
+	    case 109:
+		chunk.strBlockId = "stonebricks";
+		break;
+
+	    case 126:
+		chunk.strBlockId = "planks";
+		break;
+
+	    default:
+		break;
+	    }
+	}
+    }
 
     @SuppressWarnings("unchecked")
-    private String convertToJson(int[][][] map, String name) {
+    private String convertToJson(ArrayList<Chunk> chunks, String name) {
 	JSONObject obj = new JSONObject();
 	JSONObject localization = new JSONObject();
 	localization.put("en-US", name);
 	obj.put("localization", localization);
 
-	JSONArray blocks = new JSONArray();
-	for (int y = 0; y < map[0].length; y++) {
-	    for (int z = 0; z < map[0][0].length; z++) {
-		for (int x = 0; x < map.length; x++) {
-		    JSONObject block = new JSONObject();
-		    block.put("x", x);
-		    block.put("y", y - 1);
-		    block.put("z", z);
-
-		    switch (map[x][y][z]) {
-		    case 0:
-			break;
-
-		    case 2:
-			block.put("typename", "grass");
-			blocks.add(block);
-			break;
-
-		    case 3:
-			block.put("typename", "dirt");
-			blocks.add(block);
-			break;
-
-		    case 4:
-			block.put("typename", "stonebricks");
-			blocks.add(block);
-			break;
-
-		    case 5:
-			block.put("typename", "planks");
-			blocks.add(block);
-			break;
-
-		    case 17:
-			block.put("typename", "logtemperate");
-			blocks.add(block);
-			break;
-
-		    case 53:
-			block.put("typename", "planks");
-			blocks.add(block);
-			break;
-
-		    case 54:
-			block.put("typename", "crate");
-			blocks.add(block);
-			break;
-
-		    case 58:
-			block.put("typename", "workbench");
-			blocks.add(block);
-			break;
-
-		    case 61:
-			block.put("typename", "stonebricks");
-			blocks.add(block);
-			break;
-
-		    case 67:
-			block.put("typename", "stonebricks");
-			blocks.add(block);
-			break;
-
-		    case 109:
-			block.put("typename", "stonebricks");
-			blocks.add(block);
-			break;
-
-		    case 126:
-			block.put("typename", "planks");
-			blocks.add(block);
-			break;
-
-		    default:
-			break;
-		    }
-		}
-	    }
+	JSONArray chunkList = new JSONArray();
+	for (Chunk chunk: chunks) {
+	    chunkList.add(chunk.getJSON());
 	}
-	obj.put("blocks", blocks);
+	
+	obj.put("blocks", chunkList);
 
 	return obj.toString();
 
