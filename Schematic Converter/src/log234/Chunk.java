@@ -4,8 +4,7 @@ import org.json.simple.JSONObject;
 
 public class Chunk {
     // ID
-    int intBlockId = -1;
-    String strBlockId = null;
+    String blockID = null;
     
     // Location
     int x = -1;
@@ -17,8 +16,8 @@ public class Chunk {
     int width = -1;
     int depth = -1;
     
-    Chunk(int id, int x, int y, int z) {
-	intBlockId = id;
+    Chunk(String id, int x, int y, int z) {
+	blockID = id;
 	this.x = x;
 	this.y = y;
 	this.z = z;
@@ -42,7 +41,7 @@ public class Chunk {
 	obj.put("x", x);
 	obj.put("y", y);
 	obj.put("z", z);
-	obj.put("typename", strBlockId);
+	obj.put("typename", blockID);
 	
 	if (height != -1) {
 	    obj.put("height", height);

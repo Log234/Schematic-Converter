@@ -3,12 +3,20 @@ package log234;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+
+import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.Tag;
@@ -19,8 +27,51 @@ import lightbulb.LightbulbTerminal.Severity;
 
 public class FileManager {
     static LightbulbTerminal io;
-    
 
+    static void verifyFiles() {
+	File blockIDs = new File("BlockIDs.json");
+	if (!blockIDs.exists()) {
+	    try {
+		URL inputUrl = Main.class.getResource("BlockIDs.json");
+		FileUtils.copyURLToFile(inputUrl, blockIDs);
+	    } catch (IOException e) {
+		io.log(Severity.ERROR, "Unable to create BlockIDs file!");
+		io.log(Severity.ERROR, e.getLocalizedMessage());
+		io.pausedExit(0);
+	    }
+	    io.println("Created a file for customizing how to translate the block IDs: BlockIDs.json");
+	}
+    }
+
+    static HashMap<Integer, String> getBlockIDs() {
+	HashMap<Integer, String> blockIDs = new HashMap<Integer, String>();
+	verifyFiles();
+
+	JSONParser parser = new JSONParser();
+
+	try {
+	    JSONObject obj = (JSONObject) parser.parse(new FileReader(new File("BlockIDs.json")));
+	    for (Object objElem : obj.entrySet()) {
+		@SuppressWarnings("unchecked")
+		Entry<String, String> entry = (Entry<String, String>) objElem;
+		int intID = Integer.parseInt(entry.getKey());
+		String strID = entry.getValue();
+
+		if (!strID.equals("")) {
+		    blockIDs.put(intID, strID);
+		}
+	    }
+
+	} catch (IOException e) {
+	    io.log(Severity.ERROR, "An error occurred while trying to read BlockIDs.json");
+	    io.log(Severity.ERROR, e.getLocalizedMessage());
+	} catch (ParseException e) {
+	    io.log(Severity.ERROR, "An error occurred while trying to parse BlockIDs.json");
+	    io.log(Severity.ERROR, e.getLocalizedMessage());
+	}
+
+	return blockIDs;
+    }
 
     static List<File> getFiles() {
 	HashMap<String, List<String>> mapping = new HashMap<String, List<String>>();
@@ -35,11 +86,11 @@ public class FileManager {
 	    return files;
 	} else {
 	    io.log(Severity.ERROR, "Cannot continue without a file!");
-	    System.exit(0);
+	    io.pausedExit(0);
 	    return null;
 	}
     }
-    
+
     static void saveFile(String result) {
 	HashMap<String, List<String>> mapping = new HashMap<String, List<String>>();
 	ArrayList<String> extension = new ArrayList<String>();
@@ -59,10 +110,11 @@ public class FileManager {
 	} catch (IOException e) {
 	    io.log(Severity.ERROR, "Could not save file!");
 	    io.log(Severity.ERROR, e.getLocalizedMessage());
+	    io.pausedExit(0);
 	}
 	io.println("Saved!");
     }
-    
+
     static int[][][] parseSchematic(File schematic) {
 	Tag<?> readTag = null;
 
