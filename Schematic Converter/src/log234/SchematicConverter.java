@@ -32,8 +32,11 @@ public class SchematicConverter implements Runnable {
 	    io.println("What do you want to name the blueprint?");
 	    String name = io.readLine("Name:");
 
+	    io.println("Parsing map...");
 	    int[][][] map = FileManager.parseSchematic(schematic);
+	    io.println("Calculating chunks...");
 	    ArrayList<Chunk> chunks = generateChunks(map);
+	    io.println("Converting to JSON...");
 	    String result = convertToJson(chunks, name);
 	    FileManager.saveFile(result);
 	}
@@ -42,11 +45,13 @@ public class SchematicConverter implements Runnable {
     private ArrayList<Chunk> generateChunks(int[][][] map) {
 	ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 
-	for (int x = 0; x < map.length; x++) {
-	    for (int y = 0; y < map[0].length; y++) {
+	for (int y = 0; y < map[0].length; y++) {
+	    for (int x = 0; x < map.length; x++) {
 		for (int z = 0; z < map[0][0].length; z++) {
 		    if (blockIDs.containsKey(map[x][y][z])) {
-			Chunk chunk = new Chunk(blockIDs.get(map[x][y][z]), x, y-1, z);
+			Chunk chunk = new Chunk(blockIDs.get(map[x][y][z]), x, y, z);
+			ChunkGenerator.calculateChunk(map, chunk);
+			chunk.y--;
 			chunks.add(chunk);
 		    }
 		}

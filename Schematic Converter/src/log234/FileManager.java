@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -100,6 +99,11 @@ public class FileManager {
 	io.println("Select where to save the blueprint:");
 	File path = io.saveFile("Blueprint: ", mapping);
 
+	if (path == null) {
+	    io.log(Severity.ERROR, "Save location not specified!");
+	    io.pausedExit(0);
+	}
+
 	io.println("Saving the file...");
 	FileWriter fw;
 	try {
@@ -132,18 +136,16 @@ public class FileManager {
 	CompoundMap content = (CompoundMap) readTag.getValue();
 	short width = (short) content.get("Width").getValue();
 	short height = (short) content.get("Height").getValue();
-	short length = (short) content.get("Length").getValue();
+	short depth = (short) content.get("Length").getValue();
 
-	io.println("Width: " + width + ", Height: " + height + ", Length: " + length);
-
-	int[][][] map = new int[width][height][length];
+	int[][][] map = new int[width][height][depth];
 
 	byte[] blocks = (byte[]) content.get("Blocks").getValue();
 	ArrayList<Integer> blockTypes = new ArrayList<Integer>();
 
 	int index = 0;
 	for (int y = 0; y < height; y++) {
-	    for (int z = 0; z < length; z++) {
+	    for (int z = 0; z < depth; z++) {
 		for (int x = 0; x < width; x++) {
 		    map[x][y][z] = blocks[index++];
 		    if (!blockTypes.contains(map[x][y][z])) {
@@ -151,13 +153,6 @@ public class FileManager {
 		    }
 		}
 	    }
-	}
-
-	Collections.sort(blockTypes);
-
-	io.println("Block IDs:");
-	for (int id : blockTypes) {
-	    io.println(id);
 	}
 
 	return map;

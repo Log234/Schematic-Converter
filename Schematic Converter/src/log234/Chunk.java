@@ -12,9 +12,9 @@ public class Chunk {
     int z = -1;
     
     // Size
-    int height = -1;
-    int width = -1;
-    int depth = -1;
+    int height = 1;
+    int width = 1;
+    int depth = 1;
     
     Chunk(String id, int x, int y, int z) {
 	blockID = id;
@@ -31,8 +31,12 @@ public class Chunk {
 	this.width = width;
     }
     
-    void setDepth (int length) {
-	this.depth = length;
+    void setDepth (int depth) {
+	this.depth = depth;
+    }
+    
+    int getSize() {
+	return height * width * depth;
     }
     
     @SuppressWarnings("unchecked")
@@ -43,15 +47,15 @@ public class Chunk {
 	obj.put("z", z);
 	obj.put("typename", blockID);
 	
-	if (height != -1) {
+	if (height != 1) {
 	    obj.put("height", height);
 	}
 	
-	if (width != -1) {
+	if (width != 1) {
 	    obj.put("width", width);
 	}
 	
-	if (depth != -1) {
+	if (depth != 1) {
 	    obj.put("depth", depth);
 	}
 	
