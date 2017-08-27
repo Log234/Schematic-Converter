@@ -1,5 +1,6 @@
 package log234;
 
+
 public class ChunkGenerator {
     static void calculateChunk(int[][][] map, Chunk chunk) {
 	getDepth(map, chunk);

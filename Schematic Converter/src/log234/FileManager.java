@@ -31,7 +31,7 @@ public class FileManager {
 	File blockIDs = new File("BlockIDs.json");
 	if (!blockIDs.exists()) {
 	    try {
-		URL inputUrl = Main.class.getResource("BlockIDs.json");
+		URL inputUrl = Main.class.getResource("files/BlockIDs.json");
 		FileUtils.copyURLToFile(inputUrl, blockIDs);
 	    } catch (IOException e) {
 		io.log(Severity.ERROR, "Unable to create BlockIDs file!");
