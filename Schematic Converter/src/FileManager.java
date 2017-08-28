@@ -44,6 +44,7 @@ public class FileManager {
 		io.pausedExit(0);
 	    }
 	    io.println("Created a file for customizing how to translate the block IDs: BlockIDs.json");
+	    io.pausedExit(0);
 	}
     }
 
@@ -144,11 +145,11 @@ public class FileManager {
 	    FileWriter fw;
 	    try {
 		for (int i = 0; i < result.length; i++) {
-		    fw = new FileWriter(new File(folder + "/" + name + "_pt" + (i+1) + ".json"));
+		    fw = new FileWriter(new File(folder + "/" + name + "_pt" + (i + 1) + ".json"));
 		    fw.write(result[i]);
 		    fw.flush();
 		    fw.close();
-		    io.println("Saved: " + folder + "/" + name + "_pt" + (i+1) + ".json");
+		    io.println("Saved: " + folder + "/" + name + "_pt" + (i + 1) + ".json");
 		}
 	    } catch (IOException e) {
 		io.log(Severity.ERROR, "Could not save file!");
@@ -183,7 +184,7 @@ public class FileManager {
 	io.println("Dimensions - Width: " + width + ", Length: " + depth + ", Height: " + height);
 	map = new int[width][height][depth];
 	data = new int[width][height][depth];
-	
+
 	byte[] dataBlocks = (byte[]) content.get("Data").getValue();
 
 	byte[] blocks = (byte[]) content.get("Blocks").getValue();
@@ -197,9 +198,9 @@ public class FileManager {
 		}
 	    }
 	}
-	
-	int[][][][] maps = {map, data};
-	
+
+	int[][][][] maps = { map, data };
+
 	return maps;
     }
 }
