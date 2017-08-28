@@ -6,6 +6,7 @@ Download: https://github.com/Log234/Schematic-Converter/releases
 
 ### How to use it
 #### First-time setup
+0. Make sure you have Java installed
 1. Download the latest version (The .jar file): https://github.com/Log234/Schematic-Converter/releases
 2. Place it in an empty folder
 3. Double-click the file to run it
