@@ -34,9 +34,10 @@ public class SchematicConverter implements Runnable {
 	    String name = io.readLine("Name:");
 
 	    io.println("Parsing map...");
-	    int[][][] map = null;
-	    int[][][] data = null;
-	    FileManager.parseSchematic(schematic, map, data);
+	    int[][][][] maps = FileManager.parseSchematic(schematic);
+	    int[][][] map = maps[0];
+	    int[][][] data = maps[1];
+
 	    io.println("Calculating chunks...");
 	    ArrayList<Chunk> chunks = generateChunks(map, data);
 	    io.println("Blocks: " + schematicSize + ", Chunks: " + chunks.size());
@@ -48,6 +49,9 @@ public class SchematicConverter implements Runnable {
     }
 
     private ArrayList<Chunk> generateChunks(int[][][] map, int[][][] data) {
+	io.println(
+		"Choose a height offset. This is so that you can adjust for schematics that includes part of the ground or that are supposed to fly above ground.");
+	int yOffset = io.readInt("Offset:", -100, 100);
 	ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 
 	for (int y = 0; y < map[0].length; y++) {
@@ -57,8 +61,8 @@ public class SchematicConverter implements Runnable {
 			String metadata = getMetadata(map[x][y][z], data[x][y][z]);
 			if (!metadata.equals("FOOT")) {
 			    Chunk chunk = new Chunk(blockIDs.get(map[x][y][z]) + metadata, x, y, z);
-			    ChunkGenerator.calculateChunk(map, chunk);
-			    chunk.y--;
+			    ChunkGenerator.calculateChunk(map, data, chunk);
+			    chunk.y += yOffset;
 			    chunks.add(chunk);
 			    schematicSize += chunk.getSize();
 			}
@@ -70,54 +74,56 @@ public class SchematicConverter implements Runnable {
 	return chunks;
     }
 
-    private String getMetadata(int block, int data) {
+    static String getMetadata(int block, int data) {
 	switch (block) {
+	// Beds
 	case 26:
-	    if (getBit(data, 8)) {
+	    if (getBit(data, 3)) {
 		if (getBit(data, 0))
-		    return "z+";
-		if (getBit(data, 1))
-		    return "x+";
-		if (getBit(data, 2))
 		    return "z-";
-
-		return "x-";
+		if (getBit(data, 1))
+		    return "x-";
+		if (getBit(data, 2))
+		    return "z+";
+		return "x+";
 	    } else {
 		return "FOOT";
 	    }
 
+	    // Torches
 	case 50:
 	case 75:
 	case 76:
 	    switch (data) {
 	    case 1:
-		return "x+";
+		return "z+";
 
 	    case 2:
-		return "x-";
-
-	    case 3:
 		return "z-";
 
+	    case 3:
+		return "x-";
+
 	    case 4:
-		return "z+";
+		return "x+";
 
 	    case 5:
 		return "y+";
 	    }
 
+	    // Furnaces
 	case 61:
 	case 62:
 	    switch (data) {
 	    case 2:
 	    default:
-		return "z+";
-	    case 3:
-		return "z-";
-	    case 4:
 		return "x-";
-	    case 5:
+	    case 3:
 		return "x+";
+	    case 4:
+		return "z+";
+	    case 5:
+		return "z-";
 	    }
 
 	default:
@@ -125,7 +131,7 @@ public class SchematicConverter implements Runnable {
 	}
     }
 
-    public boolean getBit(int data, int position) {
+    public static boolean getBit(int data, int position) {
 	return ((data >> position) & 1) == 1;
     }
 

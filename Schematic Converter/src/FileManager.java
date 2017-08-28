@@ -127,7 +127,7 @@ public class FileManager {
 		fw.write(result[0]);
 		fw.flush();
 		fw.close();
-		io.println("Saved: " + folder + name);
+		io.println("Saved: " + folder + "/" + name);
 	    } catch (IOException e) {
 		io.log(Severity.ERROR, "Could not save file!");
 		io.log(Severity.ERROR, e.getLocalizedMessage());
@@ -159,7 +159,9 @@ public class FileManager {
 	io.println("Saved!");
     }
 
-    static void parseSchematic(File schematic, int[][][] map, int[][][] data) {
+    static int[][][][] parseSchematic(File schematic) {
+	int[][][] map;
+	int[][][] data;
 	Tag<?> readTag = null;
 
 	try {
@@ -178,6 +180,7 @@ public class FileManager {
 	short height = (short) content.get("Height").getValue();
 	short depth = (short) content.get("Length").getValue();
 
+	io.println("Dimensions - Width: " + width + ", Length: " + depth + ", Height: " + height);
 	map = new int[width][height][depth];
 	data = new int[width][height][depth];
 	
@@ -189,10 +192,14 @@ public class FileManager {
 	for (int y = 0; y < height; y++) {
 	    for (int z = 0; z < depth; z++) {
 		for (int x = 0; x < width; x++) {
-		    map[x][y][z] = blocks[index++];
+		    map[x][y][z] = blocks[index];
 		    data[x][y][z] = dataBlocks[index++];
 		}
 	    }
 	}
+	
+	int[][][][] maps = {map, data};
+	
+	return maps;
     }
 }
