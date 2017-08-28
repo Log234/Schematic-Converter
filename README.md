@@ -24,11 +24,11 @@ Download: https://github.com/Log234/Schematic-Converter/releases
 
 #### Division of a blueprint on multiple workers
 If you chose to divide the blueprint on more than one colonist there will be several files stored in the blueprints folder.
-They will be named <span><</span>1The filename you chose<span>></span>_ptX.json, where X is the part number.
+They will be named <span><</span>The filename you chose<span>></span>_ptX.json, where X is the part number.
 Each of those files are a part of your blueprint, and they fit together like a puzzle.
 
 Here is how to use them:
-1. When you get in-game, you will notice that you have several new blueprints named <span><</span>The blueprint name you chose<span>></span>1 part x. Where x is the part number.
+1. When you get in-game, you will notice that you have several new blueprints named <span><</span>The blueprint name you chose<span>></span> part x. Where x is the part number.
 2. Request them to be built, the same way as all other blueprints.
 3. Here comes the important bit: To build the blueprint, place all the blueprint parts side-by-side, from part 1 to however many pieces you decided to split them into. If you place them in the right order and leave no gap in-between them, they should produce the full blueprint.
   
