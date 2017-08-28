@@ -1,9 +1,9 @@
-package log234;
+
 
 
 import org.json.simple.JSONObject;
 
-public class Chunk {
+public class Chunk implements Comparable<Chunk> {
     // ID
     String blockID = null;
     
@@ -61,5 +61,10 @@ public class Chunk {
 	}
 	
 	return obj;
+    }
+
+    @Override
+    public int compareTo(Chunk chunkB) {
+	return this.y - chunkB.y;
     }
 }

@@ -1,4 +1,4 @@
-package log234;
+
 
 	
 import javafx.application.Application;
