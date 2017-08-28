@@ -10,7 +10,7 @@ Download: https://github.com/Log234/Schematic-Converter/releases
 1. Download the latest version (The .jar file): https://github.com/Log234/Schematic-Converter/releases
 2. Place it in an empty folder
 3. Double-click the file to run it
-4. This will generate a file named BlockIDs.json, you may edit this file to customize which blocks the program should convert between. Minecraft IDs on the left, Colony survival IDs on the right.
+4. This will generate a file named BlockIDs.json, you may edit this file to customize which blocks the program should convert between. Minecraft IDs on the left, Colony survival IDs on the right. (You can use block IDs from your CS mods here, although modded blocks with a direction, like stairs and such, are not guaranteed to be placed in the right direction.)
 
 #### Usage
 1. To start the program, simply double-click the .jar file
