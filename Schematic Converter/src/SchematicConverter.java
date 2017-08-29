@@ -80,12 +80,12 @@ public class SchematicConverter implements Runnable {
 	case 26:
 	    if (getBit(data, 3)) {
 		if (getBit(data, 0))
-		    return "z-";
-		if (getBit(data, 1))
 		    return "x-";
+		if (getBit(data, 1))
+		    return "z-";
 		if (getBit(data, 2))
-		    return "z+";
-		return "x+";
+		    return "x+";
+		return "z+";
 	    } else {
 		return "FOOT";
 	    }
@@ -96,16 +96,16 @@ public class SchematicConverter implements Runnable {
 	case 76:
 	    switch (data) {
 	    case 1:
-		return "z+";
+		return "x+";
 
 	    case 2:
-		return "z-";
-
-	    case 3:
 		return "x-";
 
+	    case 3:
+		return "z-";
+
 	    case 4:
-		return "x+";
+		return "z+";
 
 	    case 5:
 		return "y+";
@@ -117,13 +117,13 @@ public class SchematicConverter implements Runnable {
 	    switch (data) {
 	    case 2:
 	    default:
-		return "x-";
-	    case 3:
-		return "x+";
-	    case 4:
-		return "z+";
-	    case 5:
 		return "z-";
+	    case 3:
+		return "z+";
+	    case 4:
+		return "x+";
+	    case 5:
+		return "x-";
 	    }
 
 	default:
